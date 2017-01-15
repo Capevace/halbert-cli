@@ -1,0 +1,19 @@
+{
+  "name": "halbert-cli",
+  "version": "1.0.0",
+  "description": "The CLI for the H.A.L.B.E.R.T. AI.",
+  "main": "index.js",
+  "repository": {
+    "url": "https://github.com/Capevace/halbert-cli",
+    "type": "git"
+  },
+  "author": "Lukas von Mateffy (@Capevace)",
+  "license": "MIT",
+  "dependencies": {
+    "uuid": "^3.0.1",
+    "yargs": "^6.6.0"
+  },
+  "bin": {
+    "halbert": "./index.js"
+  }
+}
