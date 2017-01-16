@@ -5,9 +5,6 @@ const { exec, spawn } = require('child_process');
 const argv = require('yargs').argv;
 const uuid = require('uuid').v4;
 
-const CONFIG_PATH = path.resolve(__dirname, '../halbert.config.json');
-const MODULES_PATH = path.resolve(__dirname, '../modules');
-
 if (!argv._ || argv._.length <= 0) {
   console.log('H.A.L.B.E.R.T.');
   console.log('Use the CLI like this: halbert <command> <arguments>');
@@ -23,7 +20,7 @@ if (!argv._ || argv._.length <= 0) {
     process.exit(0);
   }
 
-  const folderPath = path.resolve(__dirname, folderName);
+  const folderPath = path.resolve(process.cwd(), folderName);
 
   if (fs.existsSync(folderPath)) {
     console.log('The folder already exists.');
@@ -80,24 +77,23 @@ if (!argv._ || argv._.length <= 0) {
       'utf8'
     );
     console.log(`We're now running 'npm install'. If this doesn't work you have to do that manually.`);
+    console.log('Installing packages...');
+    const npm = spawn('npm', ['install'], { cwd: path.resolve(process.cwd(), folderName)});
 
-    exec('cd ' + folderName, (err, stdin, stdout) => {
-      const npm = spawn('npm', ['install']);
+    npm.stdout.pipe(process.stdout);
 
-      npm.stdout.on('data', (data) => console.log(data));
+    npm.stderr.pipe(process.stderr);
 
-      npm.stderr.on('data', (data) => console.log(data));
-
-      npm.on('close', (code) => {
-        console.log(`Your H.A.L.B.E.R.T. instance is now complete!`);
-      });
+    npm.on('close', (code) => {
+      console.log(`Your H.A.L.B.E.R.T. instance is now complete!`);
     });
   }
 } else if (argv._[0] === 'start') {
-  const halbert = require('halbert-ai');
+  const halbert = require(path.resolve(process.cwd(), 'node_modules/halbert-ai/'));
+  console.log(path.resolve(process.cwd(), 'modules'));
   halbert(
-    path.resolve(__dirname, 'halbert.config.json'),
-    path.resolve(__dirname, 'modules')
+    path.resolve(process.cwd(), 'halbert.config.json'),
+    path.resolve(process.cwd(), 'modules')
   );
 } else {
   console.log('Command unknown.');
